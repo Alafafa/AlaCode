@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="GBK"?>
+<project name="sindosoft_basic" default="main" basedir=".">
+	<property environment="env"/>
+	<property name="anterRoot" value="${env.ANTER_ROOT}" />
+	<property name="workDir" value="${basedir}/../.." />
+
+	<path id="AntExtLib">
+		<fileset dir="${anterRoot}/jar" includes="AntExt.jar"/>
+		<fileset dir="${anterRoot}/jar" includes="OpenFrm.jar"/>
+	</path>
+	
+	<taskdef resource="com/asiainfo/tools/ant/antlib.xml" classpathref="AntExtLib"/>
+	
+	<target name="init">
+		<condition property="realPswd" value="${env.alasPswd}" else="${userPswd}">
+			<equals arg1="${userPswd}" arg2="default" casesensitive="true"/>
+		</condition>
+		<condition property="shadowName" value="${argShadowName}" else="${hostName}">
+			<isset property="argShadowName" />
+		</condition>
+		<condition property="shadowName_" value="${argShadowName}_" else="${hostName}_">
+			<isset property="argShadowName" />
+		</condition>
+		<input message="请选择用户ID>" addproperty="inputSsUser"/>
+		
+		<echo></echo>
+		<echo>输入信息:{shadowName:${shadowName}, ssUser:${inputSsUser}}.</echo>
+	</target>
+	
+	<target name="runall" depends="init">
+		<echo>run all shadowsocks service on ${hostAddr}</echo>
+		
+		<!-- 
+		start-sss.sh:
+				cd ~sindo/shadowsocks
+				ls *.json|cut -d. -f1|awk  '{print "nohup /usr/local/bin/ssserver -c " $1".json > logs/nohup_" $1 ".out 2>&1> /dev/null &"}'|sh
+				cd -
+		stop-sss.sh:
+				cd ~sindo/shadowsocks
+				ls *.json|cut -d. -f1|cut -d/ -f5|awk  '{print "ps -ef|grep ssserver|grep -v grep|grep "$1".json"}'|sh|awk '{print $2}'|xargs kill
+				cd -
+		-->
+		<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
+				failonerror="false" timeout="5000" command=" " />
+		
+		<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
+				outputproperty="Linux" command="
+						ps -ef|grep ssserver|grep -v grep|xargs kill -9;
+						cd shadowsocks; rm -fr *.json;"/>
+						
+		<!--
+		-->
+		<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
+				outputproperty="Linux" command="
+						ls *.json|cut -d. -f1|awk '{print &quot;nohup /usr/local/bin/ssserver -c &quot; $1 &quot;.json &gt; logs/nohup_&quot; $1 &quot;.out 2>&amp;1 &lt; /dev/null &amp;&quot;}'" />
+	</target>
+	
+	<target name="kill" depends="init">
+		<echo>killing userId: ${hostAddr}\${shadowName}${inputSsUser}.json</echo>
+		
+		<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
+				failonerror="false" timeout="5000" command="
+						ps -ef|grep ssserver|grep -v grep|grep ${shadowName_}ss${inputSsUser}|awk '{print $2}'|xargs kill -9;" />
+		
+		<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
+				outputproperty="Linux" command="
+						ps -ef|grep -v grep|grep ${shadowName_}ss${inputSsUser};
+						echo +++++++++++++++++++++++++++++++++++++++++++++++++++;
+						tail -n 10 shadowsocks/logs/nohup_${shadowName_}ss${inputSsUser}.out;" />
+	</target>
+	
+	<target name="main" depends="init">
+		<echo>scping from: ${workDir}/${hostDir}/${shadowName}${inputSsUser}.json</echo>
+		<!--
+		<echo>scping to:   ${userName}:${realPswd}@${hostAddr}:/home/sindo/shadowsocks</echo>
+		-->
+		
+		<scp file="${workDir}/${hostDir}/${shadowName}${inputSsUser}.json"
+				todir="${userName}:${realPswd}@${hostAddr}:/home/sindo/shadowsocks/" trust="true"/>
+		
+		<echo>starting remote shadowsocks server for ss${inputSsUser}</echo>
+		
+		<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
+				failonerror="false" timeout="5000" command="
+						ps -ef|grep ssserver|grep -v grep|grep ${shadowName_}ss${inputSsUser}|awk '{print $2}'|xargs kill -9;
+						cd shadowsocks; 
+						mv ${shadowName}${inputSsUser}.json ${shadowName_}ss${inputSsUser}.json;
+						nohup /usr/local/bin/ssserver -c ${shadowName_}ss${inputSsUser}.json &gt;logs/nohup_${shadowName_}ss${inputSsUser}.out 2&gt;&amp;1 &lt;/dev/null &amp;">
+		</sshexec>
+		
+		<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
+				outputproperty="Linux" command="
+						ps -ef|grep -v grep|grep ${shadowName_}ss${inputSsUser};
+						tail -n 10 shadowsocks/logs/nohup_${shadowName_}ss${inputSsUser}.out;">
+		</sshexec>
+	</target>
+</project>
+
