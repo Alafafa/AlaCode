@@ -60,13 +60,13 @@
 		
 		<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
 				failonerror="false" timeout="5000" command="
-						ps -ef|grep ssserver|grep -v grep|grep ${shadowName_}ss${inputSsUser}|awk '{print $2}'|xargs kill -9;" />
+						ps -ef|grep ssserver|grep -v grep|grep ${shadowName}${inputSsUser}|awk '{print $2}'|xargs kill -9;" />
 		
 		<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
 				outputproperty="Linux" command="
-						ps -ef|grep -v grep|grep ${shadowName_}ss${inputSsUser};
+						ps -ef|grep -v grep|grep ${shadowName}{inputSsUser};
 						echo +++++++++++++++++++++++++++++++++++++++++++++++++++;
-						tail -n 10 shadowsocks/logs/nohup_${shadowName_}ss${inputSsUser}.out;" />
+						tail -n 10 shadowsocks/logs/nohup_${shadowName}${inputSsUser}.out;" />
 	</target>
 	
 	<target name="main" depends="init">
@@ -76,22 +76,22 @@
 		-->
 		
 		<scp file="${workDir}/${hostDir}/${shadowName}${inputSsUser}.json"
-				todir="${userName}:${realPswd}@${hostAddr}:/home/sindo/shadowsocks/" trust="true"/>
+				todir="${userName}:${realPswd}@${hostAddr}:/home/${userName}/shadowsocks/" trust="true"/>
 		
 		<echo>starting remote shadowsocks server for ss${inputSsUser}</echo>
 		
 		<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
 				failonerror="false" timeout="5000" command="
-						ps -ef|grep ssserver|grep -v grep|grep ${shadowName_}ss${inputSsUser}|awk '{print $2}'|xargs kill -9;
+						ps -ef|grep ssserver|grep -v grep|grep ${shadowName}${inputSsUser}|awk '{print $2}'|xargs kill -9;
 						cd shadowsocks; 
-						mv ${shadowName}${inputSsUser}.json ${shadowName_}ss${inputSsUser}.json;
-						nohup /usr/local/bin/ssserver -c ${shadowName_}ss${inputSsUser}.json &gt;logs/nohup_${shadowName_}ss${inputSsUser}.out 2&gt;&amp;1 &lt;/dev/null &amp;">
+						echo mv ${shadowName}${inputSsUser}.json ${shadowName_}ss${inputSsUser}.json;
+						nohup /usr/local/bin/ssserver -c ${shadowName}${inputSsUser}.json &gt;logs/nohup_${shadowName}${inputSsUser}.out 2&gt;&amp;1 &lt;/dev/null &amp;">
 		</sshexec>
 		
 		<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
 				outputproperty="Linux" command="
-						ps -ef|grep -v grep|grep ${shadowName_}ss${inputSsUser};
-						tail -n 10 shadowsocks/logs/nohup_${shadowName_}ss${inputSsUser}.out;">
+						ps -ef|grep -v grep|grep ${shadowName}${inputSsUser};
+						tail -n 10 shadowsocks/logs/nohup_${shadowName}${inputSsUser}.out;">
 		</sshexec>
 	</target>
 </project>
