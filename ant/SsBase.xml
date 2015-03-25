@@ -69,6 +69,25 @@
 						tail -n 10 shadowsocks/logs/nohup_${shadowName}${inputSsUser}.out;" />
 	</target>
 	
+	<target name="delete" depends="init">
+		<input message="removing userId: ${hostAddr}\${shadowName}${inputSsUser}.json, ÄãÈ·¶¨Ã´?[n/y]>" addproperty="cfmRes"/>
+		
+		<RunIf if="cfmRes" value="y">
+			<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
+					failonerror="false" timeout="5000" command="
+							ps -ef|grep ssserver|grep -v grep|grep ${shadowName}${inputSsUser}|awk '{print $2}'|xargs kill -9;
+							rm -fr /home/${userName}/shadowsocks/${shadowName}${inputSsUser}.json;" />
+			
+			<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
+					outputproperty="Linux" command="
+							ps -ef|grep -v grep|grep ${shadowName}{inputSsUser};
+							echo +++++++++++++++++++++++++++++++++++++++++++++++++++;
+							tail -n 10 shadowsocks/logs/nohup_${shadowName}${inputSsUser}.out;" />
+							
+			<delete file="${workDir}/${hostDir}/${shadowName}${inputSsUser}.json"/>
+		</RunIf>
+	</target>
+	
 	<target name="main" depends="init">
 		<echo>scping from: ${workDir}/${hostDir}/${shadowName}${inputSsUser}.json</echo>
 		<!--
