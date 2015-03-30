@@ -33,18 +33,20 @@ send_mail() {
 	
 	mailContentFile=/tmp/chg_test_pswd_mail.txt
 	
-	echo "欢迎试用AlaSS测试账号，完整JSON配置信息："		>  $mailContentFile
-	echo ""													>> $mailContentFile
-	cat  $ssCfgPath/$ssFileName 							>> $mailContentFile
-	echo ""													>> $mailContentFile
-	echo "中英对照："										>> $mailContentFile
-	echo "　　服务器 IP  <=> server"						>> $mailContentFile
-	echo "　　服务器端口 <=> server_port"					>> $mailContentFile
-	echo "　　密码       <=> password"						>> $mailContentFile
-	echo "　　加密       <=> method"						>> $mailContentFile
-	echo "　　代理端口   <=> local_port"					>> $mailContentFile
-	echo ""													>> $mailContentFile
-	echo "请尽快测试，测试账号密码在1小时后失效。"			>> $mailContentFile
+	echo "欢迎试用AlaSS测试账号，完整JSON配置信息："						>  $mailContentFile
+	echo ""																	>> $mailContentFile
+	cat  $ssCfgPath/$ssFileName 											>> $mailContentFile
+	echo ""																	>> $mailContentFile
+	echo "中英对照："														>> $mailContentFile
+	echo "　　服务器 IP  <=> server"										>> $mailContentFile
+	echo "　　服务器端口 <=> server_port"									>> $mailContentFile
+	echo "　　密码       <=> password"										>> $mailContentFile
+	echo "　　加密       <=> method"										>> $mailContentFile
+	echo "　　代理端口   <=> local_port"									>> $mailContentFile
+	echo ""																	>> $mailContentFile
+	echo "可参考ShadowSocks客户端使用教程: http://www.alafafa.com/?p=89"	>> $mailContentFile
+	echo ""																	>> $mailContentFile
+	echo "请尽快测试，测试账号密码在1小时后失效。"							>> $mailContentFile
 	
 	#cat $mailContentFile
 	mail -s "AlaSS Test Accout Info" $mailReceiver < $mailContentFile
