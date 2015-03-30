@@ -55,7 +55,7 @@ main() {
 	stop_ssServer
 	start_ssServer;
 	send_mail 'lijj@asiainfo.com';
-	#send_mail 'yelijuns@gmail.com';
+	send_mail 'yelijuns@gmail.com';
 }
 
 main
