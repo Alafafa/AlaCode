@@ -1,7 +1,7 @@
 #!/bin/sh
 ssFileName=glow++.json
 ssCfgPath=/home/alass/shadowsocks
-ssServerBinFile=/usr/bin/ssserver
+ssSrvBinFile=/usr/local/bin/ssserver
 
 reset_ssPswd() {
 	ssPassWord=`date +%s | sha256sum | base64 | head -c 12; echo`
@@ -9,9 +9,10 @@ reset_ssPswd() {
 }
 
 start_ssServer() {
-	startCfgPath=$ssCfgPath/$1
-	logFileName=`echo $1 | sed s/.json//g`
-	$ssServerBinFile -c $ssCfgPath/$ssFileName > $ssCfgPath/logs/nohup_$logFileName.out &
+	logFileName=`echo $ssFileName | sed s/.json//g`
+	cd $ssCfgPath
+	nohup $ssSrvBinFile -c $ssFileName > logs/nohup_$logFileName.out 2>&1 < /dev/null &
+	cd -
 }
 
 stop_ssServer() {
@@ -25,11 +26,11 @@ stop_ssServer() {
 }
 
 send_mail() {
-	mailReceiver=$1
-	if [ -z $1 ]; then
-		echo please input mail receiver.
-		exit
-	fi
+	# mailReceiver=$1
+	# if [ -z $1 ]; then
+		# echo please input mail receiver.
+		# exit
+	# fi
 		
 	mailContentFile=/tmp/chg_test_pswd_mail.txt
 	
@@ -51,15 +52,14 @@ send_mail() {
 	echo "²âÊÔÂúÒâÖ®ºó£¬ÇëÍ¨¹ýÌÔ±¦¹ºÂò: http://item.taobao.com/item.htm?id=42743439161"		>> $mailContentFile
 	
 	#cat $mailContentFile
-	mail -s "AlaSS Test Accout Info" $mailReceiver < $mailContentFile
+	mail -s "AlaSS Test Accout Info" 'lijj@asiainfo.com' 'yelijuns@gmail.com' < $mailContentFile
 }
 
 main() {
 	reset_ssPswd;
 	stop_ssServer
 	start_ssServer;
-	send_mail 'lijj@asiainfo.com';
-	send_mail 'yelijuns@gmail.com';
+	send_mail;
 }
 
 main

@@ -1,32 +1,32 @@
 #!/bin/sh
-ssCfgPath=~/shadowsocks
-ssBinPath=/usr/bin/ssserver
+ssCfgPath=/home/alass/shadowsocks
+ssSrvBinFile=/usr/local/bin/ssserver
 
-check(){
-	serverCounts=`ps aux | grep $1 | grep -v grep | wc -l`
+check_ssServer() { 
+	ssFileName=$1
+	serverCounts=`ps aux | grep $ssFileName | grep -v grep | wc -l`
 	if [ $serverCounts -eq 0 ]; then
-		echo "No"
-		start $1
+		echo `echo $ssFileName | sed 's/\.\w*$//'`" is not found, starting..."
+		start_ssServer $ssFileName
 	else
-		echo `echo $1 | sed 's/\.\w*$//'`" is okay"
+		echo `echo $ssFileName | sed 's/\.\w*$//'`" is still alive"
 	fi
 }
 
-start(){
-	startConfigPath=$ssCfgPath/$1
-	#LogFileName=`echo $1 | awk -F"[.]" '{system( " echo "$1)}'`
-	logFileName=`echo $1 | sed s/.json//g`
-	$ssBinPath -c $startConfigPath >> $ssCfgPath/logs/nohup_$logFileName.out &
+start_ssServer() {
+	ssFileName=$1
+	logFileName=`echo $ssFileName | sed s/.json//g`
+	cd $ssCfgPath
+	nohup $ssSrvBinFile -c $ssFileName > logs/nohup_$logFileName.out 2>&1 < /dev/null &
+	cd - > /dev/null
 }
-
-get_fileName(){
-	 echo $1 | sed  's/\.\w*$//'
-}
-
-export -f check
+export ssCfgPath
+export ssSrvBinFile
+export -f check_ssServer
+export -f start_ssServer
 
 main(){
-	ls $ssCfgPath | grep .json | awk '{system("check "$0)}'
+	ls $ssCfgPath | grep ".json" | awk  '{print "check_ssServer " $1}'|sh
 }
 
 main
