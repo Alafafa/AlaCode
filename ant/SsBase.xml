@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="GBK"?>
 <project name="sindosoft_basic" default="main" basedir=".">
 	<property environment="env"/>
-	<property name="workDir" value="${basedir}/../.." />
+	<property name="workDir" value="${env.WORK_DIR}" />
 	<property name="antExtDir" value="${basedir}/../jar" />
 
 	<path id="AntExtLib">
@@ -25,6 +25,35 @@
 		
 		<echo></echo>
 		<echo>输入信息:{shadowName:${shadowName}, ssUser:${inputSsUser}}.</echo>
+	</target>
+	
+	<target name="info" depends="init">
+		<loadfile property="jsonFileContent" srcFile="${workDir}/${hostDir}/${shadowName}${inputSsUser}.json"/>
+
+		<echo>
+感谢您选用可靠又快速的AlaSS，正式账号完整配置信息如下:
+
+${jsonFileContent}
+
+中英对照：
+　　服务器 IP  &lt;=&gt; server
+　　服务器端口 &lt;=&gt; server_port
+　　密码       &lt;=&gt; password
+　　加密       &lt;=&gt; method
+　　代理端口   &lt;=&gt; local_port
+
+注意事项：
+	为了合租主机上其他用户的上网体验，特做如下要求：
+	1)每人每月600G，以防有人滥用; 
+	2)限定1个账号最多3个设备同时上网，以防太多人共用账号(多主机共用路由器上网算1个设备);
+	3)不得通过本SS账号下载盗版软件，盗版电影，以防服务器被告侵权，从而被关闭
+
+售后服务：
+	请加入我们的售后服务企鹅群: 387477811；
+	您也可以关注我们的官方网站，http://www.alafafa.com；
+	服务器如有异动，我们会在在以上地方同步发布公告信息。
+		</echo>
+
 	</target>
 	
 	<target name="runall" depends="init">
@@ -112,6 +141,8 @@
 						ps -ef|grep -v grep|grep ${shadowName}${inputSsUser};
 						tail -n 10 shadowsocks/logs/nohup_${shadowName}${inputSsUser}.out;">
 		</sshexec>
+		
+		<antcall target="info" />
 	</target>
 </project>
 
