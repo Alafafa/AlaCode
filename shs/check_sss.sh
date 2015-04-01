@@ -8,8 +8,6 @@ check_ssServer() {
 	if [ $serverCounts -eq 0 ]; then
 		echo `echo $ssFileName | sed 's/\.\w*$//'`" is not found, starting..."
 		start_ssServer $ssFileName
-	else
-		echo `echo $ssFileName | sed 's/\.\w*$//'`" is still alive"
 	fi
 }
 

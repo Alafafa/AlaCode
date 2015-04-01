@@ -1,7 +1,19 @@
 #!/bin/sh
-ssFileName=glow++.json
+ssFileName=NULL
 ssCfgPath=/home/alass/shadowsocks
 ssSrvBinFile=/usr/local/bin/ssserver
+
+pick_ssFile() {
+	currHour=`date +%H`
+	fileFlag=`expr $currHour / 2 % 2`
+	
+	#该脚本每2小时跑1次，依次重置glow+0,glow+1对应的进程的密码
+	if [ "$fileFlag" = "0" ]; then
+		ssFileName=glow+0.json
+	else
+		ssFileName=glow+1.json
+	fi
+}
 
 reset_ssPswd() {
 	ssPassWord=`date +%s | sha256sum | base64 | head -c 12; echo`
@@ -38,7 +50,7 @@ send_mail() {
 	echo ""																					>> $mailContentFile
 	cat  $ssCfgPath/$ssFileName 															>> $mailContentFile
 	echo ""																					>> $mailContentFile
-	echo "请尽快测试，测试账号密码在1小时后失效。"											>> $mailContentFile
+	echo "请尽快测试，测试账号密码在2小时后失效。"											>> $mailContentFile
 	echo ""																					>> $mailContentFile
 	echo "中英对照："																		>> $mailContentFile
 	echo "　　服务器 IP  <=> server"														>> $mailContentFile
@@ -51,11 +63,12 @@ send_mail() {
 	echo "如需下载ShadowSocks的Windows客户端，请加企鹅群:387477811，在群共享文件下载"		>> $mailContentFile
 	echo "测试满意之后，请通过淘宝购买: http://item.taobao.com/item.htm?id=42743439161"		>> $mailContentFile
 	
-	#cat $mailContentFile
-	mail -s "AlaSS Test Accout Info" 'lijj@asiainfo.com' 'yelijuns@gmail.com' < $mailContentFile
+	#mail -s "AlaSS Test Account Info" 'lijj@asiainfo.com' 'lijiajun@gmail.com' 'yelijuns@gmail.com' < $mailContentFile
+	cat $mailContentFile|mail -s "AlaSS Test Account Info" 'lijj@asiainfo.com' 'yelijuns@gmail.com'
 }
 
 main() {
+	pick_ssFile;
 	reset_ssPswd;
 	stop_ssServer
 	start_ssServer;
