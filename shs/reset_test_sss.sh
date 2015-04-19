@@ -1,23 +1,27 @@
 #!/bin/sh
 ssFileName=NULL
-ssCfgPath=/home/alass/shadowsocks
+ssCfgPath=~/shadowsocks
 ssSrvBinFile=/usr/local/bin/ssserver
+ssPrefixCfgFileName=`hostname | cut -d . -f 1`
 
 pick_ssFile() {
 	currHour=`date +%H`
 	fileFlag=`expr $currHour / 2 % 2`
 	
-	#该脚本每2小时跑1次，依次重置glow+0,glow+1对应的进程的密码
 	if [ "$fileFlag" = "0" ]; then
-		ssFileName=glow+0.json
+		ssFileName=$ssPrefixCfgFileName+0.json
 	else
-		ssFileName=glow+1.json
+		ssFileName=$ssPrefixCfgFileName+1.json
 	fi
 }
 
 reset_ssPswd() {
 	ssPassWord=`date +%s | sha256sum | base64 | head -c 12; echo`
 	sed -i 's/password.*$/password":"'$ssPassWord'",/' $ssCfgPath/$ssFileName
+}
+
+set_ssServer() {
+	sed -i 's/server".*$/server":"'$HOSTNAME'",/' $ssCfgPath/$ssFileName
 }
 
 start_ssServer() {
@@ -70,7 +74,8 @@ send_mail() {
 main() {
 	pick_ssFile;
 	reset_ssPswd;
-	stop_ssServer
+	set_ssServer;
+	stop_ssServer;
 	start_ssServer;
 	send_mail;
 }
