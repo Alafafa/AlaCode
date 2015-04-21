@@ -50,26 +50,40 @@ def exec_command(hostAddr, hostUser, hostPswd):
 	print "}}} %2d:%2d:%2d" % (nowTime.hour, nowTime.minute, nowTime.second)
 		
 if __name__=='__main__':
-	hostUser = "root"  		
-	hostAddr= "glow.alafafa.com"
-	hostPswd = os.getenv("rootPswd")
-	sleepMin = 1		#sleep 1 minutes
+	oldStdOut = None  
+	newStdOut = None 
 	
-	if len(sys.argv)>1:
-		hostAddr = sys.argv[1]
-	if len(sys.argv)>2:
-		hostPswd = sys.argv[2]
-	if len(sys.argv)>3:
-		sleepMin = string.atoi(sys.argv[3])
-	
-	if hostPswd =="console":
-		print "please_input_password: ",
-		hostPswd = sys.stdin.readline().rstrip()
-	elif hostPswd[0:8] == "ALAFAFA-":
-		encryptPswd=hostPswd[8:]
-		hostPswd = Toolkit.decrypt(32, encryptPswd)
+	try:  
+		newStdOut = open('../log/crond_guard.log','w+')  
+		oldStdOut = sys.stdout  
+		sys.stdout = newStdOut  
+			
+		hostUser = "root"
+		hostAddr= "glow.alafafa.com"
+		hostPswd = os.getenv("rootPswd")
+		sleepMin = 1		#sleep 1 minutes
 		
-	while True:
-		exec_command(hostAddr, hostUser, hostPswd)
-		print "sleeping %d minutes......" % (sleepMin)
-		time.sleep(sleepMin*60)
+		if len(sys.argv)>1:
+			hostAddr = sys.argv[1]
+		if len(sys.argv)>2:
+			hostPswd = sys.argv[2]
+		if len(sys.argv)>3:
+			sleepMin = string.atoi(sys.argv[3])
+		
+		if hostPswd =="console":
+			print "please_input_password: ",
+			hostPswd = sys.stdin.readline().rstrip()
+		elif hostPswd[0:8] == "ALAFAFA-":
+			encryptPswd=hostPswd[8:]
+			hostPswd = Toolkit.decrypt(32, encryptPswd)
+			
+		while True:
+			exec_command(hostAddr, hostUser, hostPswd)
+			print "sleeping %d minutes......" % (sleepMin)
+			newStdOut.flush()
+			time.sleep(sleepMin*60)
+	finally:  
+		if newStdOut:  
+			newStdOut.close()  
+		if oldStdOut:  
+			sys.stdout = oldStdOut
