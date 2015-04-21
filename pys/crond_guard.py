@@ -13,7 +13,8 @@ def exec_command(hostAddr, hostUser, hostPswd):
 		print "login %s@%s ...... {{{"  % (hostUser, hostAddr)
 		
 		stdin, stdout, stderr = ssh.exec_command("ps -ef|grep crond|grep -v grep|wc -l")  
-		#stdin.write("Y")   #简单交互，输入 ‘Y’   
+		#stdin.write("Y")   #简单交互，输入 ‘Y’  
+		 
 		outLines = stdout.readlines()
 		
 		crondAlive = True
@@ -41,11 +42,14 @@ def exec_command(hostAddr, hostUser, hostPswd):
 	except :  
 		print '%s is not available.' % (hostAddr)
 		
-if __name__=='__main__':  
-	hostAddr= "saber.alafafa.com"
+if __name__=='__main__':
+	hostUser = "root"  		
+	hostAddr= "glow.alafafa.com"
+	hostPswd = os.getenv("rootPswd")
 	
-	#hostIpSeg= "10.10.15"
-	hostUser = "root"  					#主机用户  
-	hostPswd = os.getenv("rootPswd")	#主机密码  
+	if len(sys.argv)>1:
+		hostAddr = sys.argv[1]
+	if len(sys.argv)>2:
+		hostPswd = sys.argv[2]
 	
 	exec_command(hostAddr, hostUser, hostPswd)
