@@ -64,7 +64,7 @@ send_mail() {
 	echo "　　代理端口   <=> local_port"													>> $mailContentFile
 	echo ""																					>> $mailContentFile
 	echo "配置方法可参考ShadowSocks客户端使用教程: http://www.alafafa.com/?p=89"			>> $mailContentFile
-	echo "如需下载ShadowSocks的Windows客户端，请用抠抠加群:387477811，在群共享文件下载"		>> $mailContentFile
+	echo "如需下载ShadowSocks的Windows客户端，请用抠抠加群:387477811，在共享文件中下载"		>> $mailContentFile
 	echo "测试满意之后，请通过淘宝购买: http://item.taobao.com/item.htm?id=42743439161"		>> $mailContentFile
 	
 	#mail -s "AlaSS Test Account Info" 'lijj@asiainfo.com' 'lijiajun@gmail.com' 'yelijuns@gmail.com' < $mailContentFile
