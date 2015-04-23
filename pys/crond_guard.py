@@ -4,12 +4,14 @@ import time
 import string
 import paramiko
 
+from datetime import date
 from datetime import datetime
 from alafafa.util.Toolkit import Toolkit
 
 def exec_command(hostAddr, hostUser, hostPswd):
 	nowTime = datetime.now()
-	print "login %s@%s ...... {{{ %2d:%2d:%2d"  % (hostUser, hostAddr, nowTime.hour, nowTime.minute, nowTime.second)
+	todayDate = date.today()
+	print "login %s@%s ...... {{{ %4d-%2d-%2d %2d:%2d:%2d" % (hostUser, hostAddr, todayDate.year, todayDate.month, todayDate.day, nowTime.hour, nowTime.minute, nowTime.second)
 	
 	try:  
 		ssh = paramiko.SSHClient()  
@@ -47,7 +49,8 @@ def exec_command(hostAddr, hostUser, hostPswd):
 		print '\t%s is not available.' % (hostAddr)
 
 	nowTime = datetime.now()
-	print "}}} %2d:%2d:%2d" % (nowTime.hour, nowTime.minute, nowTime.second)
+	todayDate = date.today()
+	print "}}} %4d-%2d-%2d %2d:%2d:%2d" % (todayDate.year, todayDate.month, todayDate.day, nowTime.hour, nowTime.minute, nowTime.second)
 		
 if __name__=='__main__':
 	oldStdOut = None  
