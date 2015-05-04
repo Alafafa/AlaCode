@@ -58,7 +58,7 @@ if __name__=='__main__':
 	
 	userHome = os.getenv("HOME")
 	try:  
-		newStdOut = open(userHome + "/log/crond_guard.log","w+")  
+		newStdOut = open(userHome + "/maintain/log/crond_guard.log","w+")  
 		oldStdOut = sys.stdout  
 		sys.stdout = newStdOut  
 			
