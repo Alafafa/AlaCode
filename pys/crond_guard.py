@@ -56,15 +56,16 @@ if __name__=='__main__':
 	oldStdOut = None  
 	newStdOut = None 
 	
+	userHome = os.getenv("HOME")
 	try:  
-		newStdOut = open('../log/crond_guard.log','w+')  
+		newStdOut = open(userHome + "/log/crond_guard.log","w+")  
 		oldStdOut = sys.stdout  
 		sys.stdout = newStdOut  
 			
 		hostUser = "root"
 		hostAddr= "glow.alafafa.com"
 		hostPswd = os.getenv("rootPswd")
-		sleepMin = 1		#sleep 1 minutes
+		sleepMin = 0		#sleep x minutes, if 0 then break
 		
 		if len(sys.argv)>1:
 			hostAddr = sys.argv[1]
@@ -82,9 +83,12 @@ if __name__=='__main__':
 			
 		while True:
 			exec_command(hostAddr, hostUser, hostPswd)
-			print "sleeping %d minutes......" % (sleepMin)
-			newStdOut.flush()
-			time.sleep(sleepMin*60)
+			if sleepMin >0:
+				print "sleeping %d minutes......" % (sleepMin)
+				newStdOut.flush()
+				time.sleep(sleepMin*60)
+			else:
+				break
 	finally:  
 		if newStdOut:  
 			newStdOut.close()  
