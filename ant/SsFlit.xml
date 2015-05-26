@@ -4,7 +4,7 @@
 		<property name="hostDir" value="SsFlit"/>
 		<property name="hostName" value="flit"/>
 		<property name="hostAddr" value="flit.alafafa.com" />
-		<property name="userName" value="sindo" />
+		<property name="userName" value="alass" />
 		<property name="userPswd" value="default" />
 		
 		<condition property="callAntFile" value="${argFile}" else="SsBase">
