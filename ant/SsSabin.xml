@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="GBK"?>
+<project name="SsSaber" default="main" basedir=".">
+	<target name="main">
+		<property name="hostDir" value="SsSabin"/>
+		<property name="hostName" value="sabin"/>
+		<property name="hostAddr" value="sabin.alafafa.com" />
+		<property name="userName" value="alass" />
+		<property name="userPswd" value="default" />
+		
+		<condition property="callAntFile" value="${argFile}" else="SsBase">
+			<and>
+				<isset property="argFile" />
+				<not>
+					<equals arg1="${argFile}" arg2="-" casesensitive="false"/>
+				</not>
+			</and>
+		</condition>
+		
+		<condition property="callTarget" value="${argTarget}" else="main">
+			<isset property="argTarget" />
+		</condition>
+		
+		<echo message="antcall://${callAntFile}.xml/${callTarget} ......" />
+		<ant antfile="./${callAntFile}.xml" target="${callTarget}" />
+	</target>
+</project>
+
