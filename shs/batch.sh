@@ -1,15 +1,15 @@
 #
-#       @Install shadowSock batch
-#       @Author: yelijun
+#       @Install ShadowSock batch
+#       @Author: Lijun Ye
 #       @Email: yelijuns@gmail.com
-#       @Copy right lovelake
-#        @Create time 2016-04-14
+#       @Copyright lovelake
+#       @Create time 2016-04-14
+#       @Last modify time 2016-04-16
 #
 
 #!/bin/sh
 
-menu()
-{
+menu() {
 cat <<EOF
 #####################################################################
 #                                                                   #
@@ -21,6 +21,7 @@ cat <<EOF
 #    6. Deploy Alass                                                #
 #    7. Set the root Password (Optional)                            #
 #    8. Set the alass Password (Optional)                           #
+#    9. Change the host name                                        #
 #    q. Quit                                                        #
 #                                                                   #
 #####################################################################
@@ -28,18 +29,13 @@ EOF
 }
 
 prefixUri=https://raw.githubusercontent.com/lijiajun/alafafa/master/shs/
-
-getCurrentPath() {
-    curPath=`pwd`
-}
-
-
+aliasWget='wget -N --no-check-certificate'
 generateSSHKey() {
     curPath=`pwd`
     generateCFile="$curPath/generateSSH"
     echo $generateCFile
     if [ ! -e $generateCFile ]; then
-        wget "${prefixUri}generateSSH" -O ${generateCFile}
+        ${aliasWget} "${prefixUri}generateSSH" -O ${generateCFile}
         chmod +x $generateCFile
     fi
     
@@ -62,7 +58,20 @@ installSS() {
 }
 
 setChinaTimezone() {
-    cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+    # Default the zoneinfo as the Shanghai China
+    if [ "$0" -eq "Asia/Shanghai" ];
+    then
+        zoneinfoFile=/usr/share/zoneinfo/Asia/Shanghai
+        if [ -e ${zoneinfoFile} ];
+        then
+            cp ${zoneinfoFile} /etc/localtime
+        else
+            echo "Zoneinfo File Does not exist"
+        fi
+    else
+        # CentOS
+        tzselect
+    fi
 }
 
 groupAlassAdd() {
@@ -86,7 +95,14 @@ userAlassAdd() {
 }
 
 baseSettings() {
-    setChinaTimezone
+    z=Asia/Shanghai
+    read -p "Input the zoneinfo, [Asia/Shanghai]" zi
+    if [ !-z $z ];
+    then
+        z=$zi
+    fi
+    setChinaTimezone $z
+    
     groupAlassAdd
     userAlassAdd
     echo "############## Base settings has been set, (Timezone, user and Group) #################"
@@ -156,9 +172,23 @@ alass hard memlock 4000000' >> /etc/security/limits.conf
 }
 
 installServerSpeeder() {
-    wget -N --no-check-certificate https://raw.githubusercontent.com/91yun/serverspeeder/master/serverspeeder-all.sh && bash serverspeeder-all.sh && chkconfig serverSpeeder on
+    ${aliasWget} -N --no-check-certificate https://raw.githubusercontent.com/91yun/serverspeeder/master/serverspeeder-all.sh && bash serverspeeder-all.sh && chkconfig serverSpeeder on
     echo "############## Server Speeder has been installed #################"
     echo ""
+}
+
+downloadShFile() {
+    # $0: fileName
+    shFileName=$1
+    basePath=/home/alass/
+    shPath=${basePath}maintain/shs/
+    prefixUri=https://raw.githubusercontent.com/lijiajun/alafafa/master/shs/
+    if [ ! -e ${shPath}${shFileName} ];
+    then
+        ${aliasWget} ${prefixUri}$1 -O ${shPath}${shFileName}
+    else
+        echo "${shFileName} has exist"
+    fi;
 }
 
 deployAlass() {
@@ -167,27 +197,61 @@ deployAlass() {
     prefixUri=https://raw.githubusercontent.com/lijiajun/alafafa/master/shs/
     mkdir -p $shPath
 
-    wget ${prefixUri}check_sss.sh -O ${shPath}check_sss.sh
-    wget ${prefixUri}reset_test_sss.sh -O ${shPath}reset_test_sss.sh
-    wget ${prefixUri}start_sss.sh -O ${shPath}start_sss.sh
-	wget ${prefixUri}stop_sss.sh -O ${shPath}stop_sss.sh
+    downloadShFile "check_sss.sh"
+    downloadShFile "reset_test_sss.sh"
+    downloadShFile "start_sss.sh"
+    downloadShFile "stop_sss.sh"
+    
+    #${aliasWget} ${prefixUri}check_sss.sh -O ${shPath}check_sss.sh
+    #${aliasWget} ${prefixUri}reset_test_sss.sh -O ${shPath}reset_test_sss.sh
+    #${aliasWget} ${prefixUri}start_sss.sh -O ${shPath}start_sss.sh
+	#${aliasWget} ${prefixUri}stop_sss.sh -O ${shPath}stop_sss.sh
 
-	chown -R alass:alass ${basePath}maintain
-	chmod +x ${shPath}*.sh
-
-	echo "*/2     *       *       *       *       alass   /bin/sh ${shPath}/check_sss.sh
-1       */2     *       *       *       alass   /bin/sh ${shPath}reset_test_sss.sh" >> /etc/crontab
+    c=`cat /etc/crontab | grep check_sss.sh | grep -v grep | wc -l`
+    if [ $c -eq 0 ];
+    then
+        echo "*/2     *       *       *       *       alass   /bin/sh ${shPath}/check_sss.sh" >> /etc/crontab
+    fi
+    
+    c=`cat /etc/crontab | grep reset_test_sss.sh | grep -v grep | wc -l`
+    if [ $c -eq 0 ];
+    then
+        echo "*/2     *       *       *       *       alass   /bin/sh ${shPath}/check_sss.sh" >> /etc/crontab
+    fi
+    
+	#echo "*/2     *       *       *       *       alass   /bin/sh ${shPath}/check_sss.sh
+#1       */2     *       *       *       alass   /bin/sh ${shPath}reset_test_sss.sh" >> /etc/crontab
 
 	ssPath=${basePath}shadowsocks/
 	mkdir -p ${ssPath}logs
     
-    groupAlassAdd
-    userAlassAdd
-	chown -R alass:alass $ssPath
+    #groupAlassAdd
+    #userAlassAdd
+    
+    #chown -R alass:alass ${basePath}maintain
+	#chmod +x ${shPath}*.sh
+	#chown -R alass:alass $ssPath
+    
+    tpl=/tmp/chg_test_pswd_mail.txt
+    if [ ! -e ${tpl} ];
+    then
+        #touch ${tpl} && chown alass:alass ${tpl}
+    fi
 
-	touch /tmp/chg_test_pswd_mail.txt
-	
 	echo "############## Deploy Alass Finished #################"
+    echo ""
+}
+
+changeHostName() {
+    read -p "Input new hostname: " hostname
+    # Tempory change the hostname
+    hostname $hostname
+    
+    # Permenently change the hostname
+    # It will effect after operator system reboot
+    sed -i "s/hostname.*/HOSTNAME=${hostname}/Ig" /etc/sysconfig/network
+    
+    echo "############## Hostname has been changed to ${hostname} #################"
     echo ""
 }
 
@@ -199,31 +263,24 @@ run() {
         case $ch in
             1)
                 generateSSHKey
-                menu
             ;;
             2)
                 installSS
-                menu
             ;;
             3)
                 baseSettings
-                menu
             ;;
             4)
                 optimateForSS
-                menu
             ;;
             5)
                 installServerSpeeder
-                menu
             ;;
             6)
                 deployAlass
-                menu
             ;;
             7)
                 passwd root
-                menu
             ;;
             8)
                 userExist=`cat /etc/passwd | grep alass | grep -v grep | wc -l`
@@ -234,13 +291,16 @@ run() {
                 else
                     echo "Alass user does not exist!"
                 fi
-                menu
+            ;;
+            9)
+                changeHostName
             ;;
             q)
                 echo 'Exit the settings!'
                 exit
             ;;
         esac
+        menu
     done
 }
 
