@@ -59,7 +59,7 @@ installSS() {
 
 setChinaTimezone() {
     # Default the zoneinfo as the Shanghai China
-    if [ "$0" -eq "Asia/Shanghai" ];
+    if [ "$1" -eq "Asia/Shanghai" ];
     then
         zoneinfoFile=/usr/share/zoneinfo/Asia/Shanghai
         if [ -e ${zoneinfoFile} ];
@@ -97,7 +97,7 @@ userAlassAdd() {
 baseSettings() {
     z=Asia/Shanghai
     read -p "Input the zoneinfo, [Asia/Shanghai]" zi
-    if [ !-z $zi ];
+    if [ !-z $z ];
     then
         z=$zi
     fi
