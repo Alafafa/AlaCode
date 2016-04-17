@@ -97,7 +97,7 @@ userAlassAdd() {
 baseSettings() {
     z=Asia/Shanghai
     read -p "Input the zoneinfo, [Asia/Shanghai]" zi
-    if [ !-z $z ];
+    if [ !-z $zi ];
     then
         z=$zi
     fi
@@ -201,11 +201,6 @@ deployAlass() {
     downloadShFile "reset_test_sss.sh"
     downloadShFile "start_sss.sh"
     downloadShFile "stop_sss.sh"
-    
-    #${aliasWget} ${prefixUri}check_sss.sh -O ${shPath}check_sss.sh
-    #${aliasWget} ${prefixUri}reset_test_sss.sh -O ${shPath}reset_test_sss.sh
-    #${aliasWget} ${prefixUri}start_sss.sh -O ${shPath}start_sss.sh
-	#${aliasWget} ${prefixUri}stop_sss.sh -O ${shPath}stop_sss.sh
 
     c=`cat /etc/crontab | grep check_sss.sh | grep -v grep | wc -l`
     if [ $c -eq 0 ];
@@ -216,7 +211,7 @@ deployAlass() {
     c=`cat /etc/crontab | grep reset_test_sss.sh | grep -v grep | wc -l`
     if [ $c -eq 0 ];
     then
-        echo "*/2     *       *       *       *       alass   /bin/sh ${shPath}check_sss.sh" >> /etc/crontab
+        echo "*/2     *       *       *       *       alass   /bin/sh ${shPath}reset_test_sss.sh" >> /etc/crontab
     fi
 
 	ssPath=${basePath}shadowsocks/
