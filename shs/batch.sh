@@ -210,32 +210,29 @@ deployAlass() {
     c=`cat /etc/crontab | grep check_sss.sh | grep -v grep | wc -l`
     if [ $c -eq 0 ];
     then
-        echo "*/2     *       *       *       *       alass   /bin/sh ${shPath}/check_sss.sh" >> /etc/crontab
+        echo "*/2     *       *       *       *       alass   /bin/sh ${shPath}check_sss.sh" >> /etc/crontab
     fi
     
     c=`cat /etc/crontab | grep reset_test_sss.sh | grep -v grep | wc -l`
     if [ $c -eq 0 ];
     then
-        echo "*/2     *       *       *       *       alass   /bin/sh ${shPath}/check_sss.sh" >> /etc/crontab
+        echo "*/2     *       *       *       *       alass   /bin/sh ${shPath}check_sss.sh" >> /etc/crontab
     fi
-    
-	#echo "*/2     *       *       *       *       alass   /bin/sh ${shPath}/check_sss.sh
-#1       */2     *       *       *       alass   /bin/sh ${shPath}reset_test_sss.sh" >> /etc/crontab
 
 	ssPath=${basePath}shadowsocks/
 	mkdir -p ${ssPath}logs
     
-    #groupAlassAdd
-    #userAlassAdd
+    groupAlassAdd
+    userAlassAdd
     
-    #chown -R alass:alass ${basePath}maintain
-	#chmod +x ${shPath}*.sh
-	#chown -R alass:alass $ssPath
+    chown -R alass:alass ${basePath}maintain
+    chmod +x ${shPath}*.sh
+    chown -R alass:alass $ssPath
     
     tpl=/tmp/chg_test_pswd_mail.txt
     if [ ! -e ${tpl} ];
     then
-        #touch ${tpl} && chown alass:alass ${tpl}
+        touch ${tpl} && chown alass:alass ${tpl}
     fi
 
 	echo "############## Deploy Alass Finished #################"
