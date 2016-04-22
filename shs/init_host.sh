@@ -4,7 +4,7 @@
 #       @Email: yelijuns@gmail.com
 #       @Copyright lovelake
 #       @Create time 2016-04-14
-#       @Last modify time 2016-04-16
+#       @Last modify time 2016-04-20
 #
 
 #!/bin/sh
@@ -13,8 +13,8 @@ menu() {
 cat <<EOF
 #####################################################################
 #                                                                   #
-#    1. Generate SSH Keys (Optional)                                #
-#    2. Install ShadowSocks                                         #
+#    1. Install ShadowSocks (Python)                                #
+#    2. Install ShadowSocks (Go)                                    #
 #    3. Base settings, Timezone, group user, etc.                   #
 #    4. Optimate the system for SS                                  #
 #    5. Install ServerSpeeder for optimate the speed (Optional)     #
@@ -22,6 +22,9 @@ cat <<EOF
 #    7. Set the root Password (Optional)                            #
 #    8. Set the alass Password (Optional)                           #
 #    9. Change the host name                                        #
+#    10. Generate SSH Keys (Optional)                               #
+#    11. Add Check process to Crontab                               #
+#    12. Add Reset test config process to Crontab                   #
 #    q. Quit                                                        #
 #                                                                   #
 #####################################################################
@@ -46,14 +49,24 @@ generateSSHKey() {
 	echo ""
 }
 
-installSS() {
+installSSPythonVersion() {
 	yum -y install python-setuptools
 	easy_install pip
 	
 	pip install shadowsocks
 	ln -s /usr/bin/ssserver /usr/local/bin/ssserver
 	
-	echo "############## ShadowSocks has been installed #################"
+	echo "############## ShadowSocks Python Version has been installed #################"
+	echo ""
+}
+
+installSSGoVersion() {
+	yum -y install go
+	mkdir -p /data/go && export GOPATH=/data/go && cd /data/go && go get github.com/shadowsocks/shadowsocks-go/cmd/shadowsocks-server
+	
+	ln -s /data/go/bin/shadowsocks-server /usr/local/bin/ssserver
+	
+	echo "############## ShadowSocks Go Version  has been installed #################"
 	echo ""
 }
 
@@ -97,7 +110,7 @@ userAlassAdd() {
 baseSettings() {
 	z=Asia/Shanghai
 	read -p "Input the zoneinfo, [Asia/Shanghai]" zi
-	if [ !-z $z ];
+	if [ !-z $zi ];
 	then
 		z=$zi
 	fi
@@ -197,22 +210,10 @@ deployAlass() {
 	prefixUri=https://raw.githubusercontent.com/lijiajun/alafafa/master/shs/
 	mkdir -p $shPath
 
-	downloadShFile "check_sss.sh"
-	downloadShFile "reset_test_sss.sh"
+	
 	downloadShFile "start_sss.sh"
 	downloadShFile "stop_sss.sh"
-
-	c=`cat /etc/crontab | grep check_sss.sh | grep -v grep | wc -l`
-	if [ $c -eq 0 ];
-	then
-		echo "*/2     *       *       *       *       alass   /bin/sh ${shPath}check_sss.sh" >> /etc/crontab
-	fi
-	
-	c=`cat /etc/crontab | grep reset_test_sss.sh | grep -v grep | wc -l`
-	if [ $c -eq 0 ];
-	then
-		echo "*/2     *       *       *       *       alass   /bin/sh ${shPath}reset_test_sss.sh" >> /etc/crontab
-	fi
+	downloadShFile "give_sss.sh"
 
 	ssPath=${basePath}shadowsocks/
 	mkdir -p ${ssPath}logs
@@ -232,6 +233,38 @@ deployAlass() {
 
 	echo "############## Deploy Alass Finished #################"
 	echo ""
+}
+
+addCheckCrontab() {
+	shPath=${basePath}maintain/shs/
+	prefixUri=https://raw.githubusercontent.com/lijiajun/alafafa/master/shs/
+	mkdir -p $shPath
+	
+	downloadShFile "check_sss.sh"
+	
+	c=`cat /etc/crontab | grep check_sss.sh | grep -v grep | wc -l`
+	if [ $c -eq 0 ];
+	then
+		echo "*/2     *       *       *       *       alass   /bin/sh ${shPath}check_sss.sh" >> /etc/crontab
+	fi
+	
+	echo "############## Add Check process to Crontab #################"
+	echo ""
+}
+
+addResetCrontab() {
+	shPath=${basePath}maintain/shs/
+	prefixUri=https://raw.githubusercontent.com/lijiajun/alafafa/master/shs/
+	mkdir -p $shPath
+	
+	downloadShFile "reset_test_sss.sh"
+	
+	c=`cat /etc/crontab | grep reset_test_sss.sh | grep -v grep | wc -l`
+	if [ $c -eq 0 ];
+	then
+		echo "1     */2       *       *       *       alass   /bin/sh ${shPath}reset_test_sss.sh" >> /etc/crontab
+	fi
+	echo "############## Add Reset test config process to Crontab #################"
 }
 
 changeHostName() {
@@ -254,7 +287,7 @@ run() {
 		read -p "Choose the step:" ch
 		case $ch in
 			1)
-				generateSSHKey
+				installSS
 			;;
 			2)
 				installSS
@@ -286,6 +319,15 @@ run() {
 			;;
 			9)
 				changeHostName
+			;;
+			10)
+				generateSSHKey
+			;;
+			11)
+				addCheckCrontab
+			;;
+			12)
+				addResetCrontab
 			;;
 			q)
 				echo 'Exit the settings!'
