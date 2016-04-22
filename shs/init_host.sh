@@ -35,14 +35,14 @@ prefixUri=https://raw.githubusercontent.com/lijiajun/alafafa/master/shs/
 aliasWget='wget -N --no-check-certificate'
 generateSSHKey() {
 	curPath=`pwd`
-	generateCFile="$curPath/generateSSH"
+	generateCFile="$curPath/generate_ssh"
 	echo $generateCFile
 	if [ ! -e $generateCFile ]; then
 		${aliasWget} "${prefixUri}generateSSH" -O ${generateCFile}
 		chmod +x $generateCFile
 	fi
 	
-	# Run the generateSSH
+	# Run the generate_ssh
 	$generateCFile
 	
 	echo "############## SSH keys has been generated #################"
