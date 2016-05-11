@@ -15,8 +15,8 @@ echo \ \ \ \ \"port_password\": { >>							~/shadowsocks/$objFileName
 
 for jsonFile in $jsonList; do (
 	echo processing ~/shadowsocks/$jsonFile;
-	userPort=`cat ~/shadowsocks/$jsonFile |jq '.server_port'`
-	userPswd=`cat ~/shadowsocks/$jsonFile |jq '.password'`
+	userPort=`cat ~/shadowsocks/$jsonFile |~/maintain/bin/jq '.server_port'`
+	userPswd=`cat ~/shadowsocks/$jsonFile |~/maintain/bin/jq '.password'`
 	echo \ \ \ \ \ \ \ \ \"$userPort\": $userPswd, >>		~/shadowsocks/$objFileName
 ) done
 
