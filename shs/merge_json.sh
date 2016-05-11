@@ -32,7 +32,7 @@ echo ssServerPid: $ssServerPid
 if [ -n "$ssServerPid" ]
 then
 	echo kill -SIGHUP $ssServerPid
-	kill -SIGHUP $ssServerPid
+	/bin/kill -SIGHUP $ssServerPid
 else
 	if [ -f "~/shadowsocks/logs/nohup_$objPrefix.out" ]
 	then
