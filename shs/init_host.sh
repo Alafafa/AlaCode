@@ -287,10 +287,10 @@ run() {
 		read -p "Choose the step:" ch
 		case $ch in
 			1)
-				installSS
+				installSSPythonVersion
 			;;
 			2)
-				installSS
+				installSSGoVersion
 			;;
 			3)
 				baseSettings
