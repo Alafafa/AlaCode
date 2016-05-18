@@ -285,6 +285,10 @@ downloadShellFiles() {
     su alass
     mkdir ~/maintain && cd ~/maintain
     /usr/bin/svn co https://github.com/lijiajun/alafafa/trunk/shs
+    mkdir ~/maintain/bin && cd ~/maintain/bin
+    aliasWget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -O jq
+    ln -s /usr/local/bin/ssserver ~/maintain/bin/sssgo
+    chmod -R +x ~/maintain/bin
 }
 
 run() {
