@@ -25,6 +25,7 @@ cat <<EOF
 #    10. Generate SSH Keys (Optional)                               #
 #    11. Add Check process to Crontab                               #
 #    12. Add Reset test config process to Crontab                   #
+#    13. Download the base shell file list                          #
 #    q. Quit                                                        #
 #                                                                   #
 #####################################################################
@@ -280,6 +281,16 @@ changeHostName() {
 	echo ""
 }
 
+downloadShellFiles() {
+    su alass
+    mkdir ~/maintain && cd ~/maintain
+    /usr/bin/svn co https://github.com/lijiajun/alafafa/trunk/shs
+    mkdir ~/maintain/bin && cd ~/maintain/bin
+    aliasWget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -O jq
+    ln -s /usr/local/bin/ssserver ~/maintain/bin/sssgo
+    chmod -R +x ~/maintain/bin
+}
+
 run() {
 	menu
 	while true
@@ -328,6 +339,9 @@ run() {
 			;;
 			12)
 				addResetCrontab
+			;;
+			13)
+				downloadShellFiles
 			;;
 			q)
 				echo 'Exit the settings!'
