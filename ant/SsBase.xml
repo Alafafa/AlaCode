@@ -90,7 +90,8 @@ ${jsonFileContent}
 		<!--
 		-->
 		<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
-				outputproperty="Linux" command="
+				outputproperty="Linux" 
+				command="
 						ls *.json|cut -d. -f1|awk '{print &quot;nohup /usr/local/bin/ssserver -c &quot; $1 &quot;.json &gt; logs/nohup_&quot; $1 &quot;.out 2>&amp;1 &lt; /dev/null &amp;&quot;}'" />
 	</target>
 	
@@ -109,9 +110,9 @@ ${jsonFileContent}
 	</target>
 	
 	<target name="delete" depends="init">
-		<input message="removing userId: ${hostAddr}\${shadowName}${inputSsUser}.json, 你确定么?[n/y]>" addproperty="cfmRes"/>
+		<input message="removing userId: ${hostAddr}\${shadowName}${inputSsUser}.json, 你确定么?[n/y]>" addproperty="confirmDelete"/>
 		
-		<RunIf if="cfmRes" value="y">
+		<RunIf if="confirmDelete" value="y">
 			<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
 					failonerror="false" timeout="5000" command="
 							ps -ef|grep ssserver|grep -v grep|grep ${shadowName}${inputSsUser}|awk '{print $2}'|xargs kill -9;
@@ -138,19 +139,26 @@ ${jsonFileContent}
 		
 		<echo>starting remote shadowsocks server for ss${inputSsUser}</echo>
 		
-		<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
-				failonerror="false" timeout="5000" command="
-						ps -ef|grep ssserver|grep -v grep|grep ${shadowName}${inputSsUser}|awk '{print $2}'|xargs kill -9;
-						cd shadowsocks; 
-						echo mv ${shadowName}${inputSsUser}.json ${shadowName_}ss${inputSsUser}.json;
-						nohup /usr/local/bin/ssserver -c ${shadowName}${inputSsUser}.json &gt;logs/nohup_${shadowName}${inputSsUser}.out 2&gt;&amp;1 &lt;/dev/null &amp;">
-		</sshexec>
+		<RunIf ifNot="multiUser">
+			<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
+					failonerror="false" timeout="5000" command="
+							ps -ef|grep ssserver|grep -v grep|grep ${shadowName}${inputSsUser}|awk '{print $2}'|xargs kill -9;
+							cd shadowsocks; 
+							echo mv ${shadowName}${inputSsUser}.json ${shadowName_}ss${inputSsUser}.json;
+							nohup /usr/local/bin/ssserver -c ${shadowName}${inputSsUser}.json &gt;logs/nohup_${shadowName}${inputSsUser}.out 2&gt;&amp;1 &lt;/dev/null &amp;">
+			</sshexec>
+			
+			<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
+					outputproperty="Linux" command="
+							ps -ef|grep -v grep|grep ${shadowName}${inputSsUser};
+							tail -n 10 shadowsocks/logs/nohup_${shadowName}${inputSsUser}.out;">
+			</sshexec>
+		</RunIf>
 		
-		<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
-				outputproperty="Linux" command="
-						ps -ef|grep -v grep|grep ${shadowName}${inputSsUser};
-						tail -n 10 shadowsocks/logs/nohup_${shadowName}${inputSsUser}.out;">
-		</sshexec>
+		<RunIf if="multiUser" value="true">
+			<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
+					outputproperty="Linux" command="echo SHELL: $$SHELL, TEST: $$TEST; cd ~/maintain/shs; sh ./merge_json.sh"/>
+		</RunIf>
 		
 		<antcall target="info" />
 	</target>

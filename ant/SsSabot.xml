@@ -6,6 +6,7 @@
 		<property name="hostAddr" value="sabot.alafafa.com" />
 		<property name="userName" value="alass" />
 		<property name="userPswd" value="default" />
+		<property name="multiUser" value="true" />
 		
 		<condition property="callAntFile" value="${argFile}" else="SsBase">
 			<and>

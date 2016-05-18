@@ -39,6 +39,6 @@ else
 		echo mv ~/shadowsocks/logs/nohup_$objPrefix.out ~/shadowsocks/logs/nohup_$objPrefix_$operDateTime.out
 		mv ~/shadowsocks/logs/nohup_$objPrefix.out ~/shadowsocks/logs/nohup_$objPrefix_$operDateTime.out
 	fi
-	echo  shadowsocks-server-linux64-1.1.4 -c ~/shadowsocks/$objFileName
-	nohup shadowsocks-server-linux64-1.1.4 -c ~/shadowsocks/$objFileName > ~/shadowsocks/logs/nohup_$objPrefix.out &
+	echo  ~/maintain/bin/sssgo -c ~/shadowsocks/$objFileName
+	nohup ~/maintain/bin/sssgo -c ~/shadowsocks/$objFileName > ~/shadowsocks/logs/nohup_$objPrefix.out &
 fi
