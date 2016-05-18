@@ -77,7 +77,7 @@ setChinaTimezone() {
 		zoneinfoFile=/usr/share/zoneinfo/Asia/Shanghai
 		if [ -e ${zoneinfoFile} ];
 		then
-			cp ${zoneinfoFile} /etc/localtime
+			cp -fp ${zoneinfoFile} /etc/localtime
 		else
 			echo "Zoneinfo File Does not exist"
 		fi
