@@ -2,7 +2,8 @@
 iptables -t filter -A OUTPUT -d 127.0.0.1 -j ACCEPT
 #iptables -t filter -m owner --uid-owner alass -A OUTPUT -p tcp --dport 20    -j ACCEPT
 #iptables -t filter -m owner --uid-owner alass -A OUTPUT -p tcp --dport 21    -j ACCEPT
-#iptables -t filter -m owner --uid-owner alass -A OUTPUT -p tcp --dport 22    -j ACCEPT
+iptables -t filter -m owner --uid-owner alass -A OUTPUT -p tcp --dport 22    -j ACCEPT
+#and other mail ports
 iptables -t filter -m owner --uid-owner alass -A OUTPUT -p tcp --dport 25    -j ACCEPT
 iptables -t filter -m owner --uid-owner alass -A OUTPUT -p tcp --dport 80    -j ACCEPT
 iptables -t filter -m owner --uid-owner alass -A OUTPUT -p tcp --dport 443   -j ACCEPT
@@ -15,16 +16,16 @@ iptables -A OUTPUT -o lo -j ACCEPT
 iptables -A INPUT  -i lo -j ACCEPT
 
 #DNS
-iptables -A OUTPUT -p udp –sport 53 -j ACCEPT 
-iptables -A INPUT  -p udp –dport 53 -j ACCEPT
+iptables -A OUTPUT -p udp -sport 53 -j ACCEPT 
+iptables -A INPUT  -p udp -dport 53 -j ACCEPT
 
 #网页-SQL
 iptables -A OUTPUT -p tcp -m multiport –dport 80,443,3306 -j ACCEPT 
 iptables -A INPUT  -p tcp -m multiport –sport 80,443,3306 -j ACCEPT
 
 #连接数
-iptables -A OUTPUT -p tcp –sport 50000:60000 -m connlimit –connlimit-above 20 -j REJECT –reject-with tcp-reset 
-iptables -A INPUT  -p tcp –dport 50000:60000 -m connlimit –connlimit-above 20 -j REJECT –reject-with tcp-reset
+iptables -A OUTPUT -p tcp -sport 50000:60000 -m connlimit –connlimit-above 20 -j REJECT –reject-with tcp-reset 
+iptables -A INPUT  -p tcp -dport 50000:60000 -m connlimit –connlimit-above 20 -j REJECT –reject-with tcp-reset
 
 #其他
 iptables -A OUTPUT -p icmp -j ACCEPT 
