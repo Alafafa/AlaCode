@@ -77,7 +77,7 @@ setChinaTimezone() {
 		zoneinfoFile=/usr/share/zoneinfo/Asia/Shanghai
 		if [ -e ${zoneinfoFile} ];
 		then
-			cp ${zoneinfoFile} /etc/localtime
+			cp -fp ${zoneinfoFile} /etc/localtime
 		else
 			echo "Zoneinfo File Does not exist"
 		fi
@@ -287,10 +287,10 @@ run() {
 		read -p "Choose the step:" ch
 		case $ch in
 			1)
-				installSS
+				installSSPythonVersion
 			;;
 			2)
-				installSS
+				installSSGoVersion
 			;;
 			3)
 				baseSettings
