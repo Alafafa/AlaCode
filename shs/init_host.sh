@@ -86,6 +86,7 @@ setChinaTimezone() {
 		# CentOS
 		tzselect
 	fi
+    ntpdate time.windows.com
 }
 
 groupAlassAdd() {
