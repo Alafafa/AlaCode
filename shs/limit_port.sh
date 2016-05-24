@@ -27,12 +27,12 @@ iptables -A OUTPUT -p udp -sport 53 -j ACCEPT
 iptables -A INPUT  -p udp -dport 53 -j ACCEPT
 
 #web & sql
-#iptables -A OUTPUT -p tcp -m multiport ¨Cdport 80,443,3306 -j ACCEPT 
-#iptables -A INPUT  -p tcp -m multiport ¨Csport 80,443,3306 -j ACCEPT
+#iptables -A OUTPUT -p tcp -m multiport â€“dport 80,443,3306 -j ACCEPT 
+#iptables -A INPUT  -p tcp -m multiport â€“sport 80,443,3306 -j ACCEPT
 
 #tcp connect limit
-iptables -A OUTPUT -p tcp -sport 50000:60000 -m connlimit ¨Cconnlimit-above 20 -j REJECT ¨Creject-with tcp-reset 
-iptables -A INPUT  -p tcp -dport 50000:60000 -m connlimit ¨Cconnlimit-above 20 -j REJECT ¨Creject-with tcp-reset
+iptables -A OUTPUT -p tcp -sport 50000:60000 -m connlimit â€“connlimit-above 20 -j REJECT â€“reject-with tcp-reset 
+iptables -A INPUT  -p tcp -dport 50000:60000 -m connlimit â€“connlimit-above 20 -j REJECT â€“reject-with tcp-reset
 
 #others
 iptables -A OUTPUT -p icmp -j ACCEPT 
@@ -43,5 +43,5 @@ iptables -P OUTPUT DROP
 iptables -P INPUT DROP 
 iptables -P FORWARD DROP
 
-#iptables -A OUTPUT -p tcp -m multiport ¨Cdport 21,22,23 -j REJECT ¨Creject-with tcp-reset 
-#iptables -A OUTPUT -p udp -m multiport ¨Cdport 21,22,23 -j DROP
+#iptables -A OUTPUT -p tcp -m multiport â€“dport 21,22,23 -j REJECT â€“reject-with tcp-reset 
+#iptables -A OUTPUT -p udp -m multiport â€“dport 21,22,23 -j DROP
