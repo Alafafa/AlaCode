@@ -77,7 +77,7 @@ main() {
 	set_ssServer;
 	stop_ssServer;
 	start_ssServer;
-	send_mail;
+	#send_mail;
 }
 
 main
