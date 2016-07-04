@@ -22,14 +22,17 @@ def remote_exec(hostAddr, hostUser, hostPswd, execCmds):
 		
 if __name__=='__main__':  
 	hostAddr= "saber.alafafa.com"
+	giveFlag = ""
 	
-	if len(sys.argv)>1:
+	if len(sys.argv)>1 and sys.argv[1] != "none":
 		hostAddr= sys.argv[1]
+	if len(sys.argv)>2 and sys.argv[2] != "none":
+		giveFlag= sys.argv[2]
 	
 	print "++++++++++++++++++++ %s ++++++++++++++++++++ " % (hostAddr)
 	
 	execCmds = [
-			'sh ~/maintain/shs/give_sss.sh'
+			'sh ~/maintain/shs/give_sss.sh ' + giveFlag
 	]	#执行命令列表  
 
 	hostUser = "alass"  					#主机用户  
@@ -43,6 +46,7 @@ if __name__=='__main__':
 	print "    3)请勿使用本账号bt下载;"
 	print "    4)请勿向第三人传播本账号;"
 	print "    5)请尽快测试，本账号有效时间为2小时，过期密码自动失效;"
+	print "    6)此测试帐号为套餐4对应账号，套餐3账号暂不提供测试，速度大概为这个账号的2/3."
 	print ""
 		
 	print "++++++++++++++++++++ %s ++++++++++++++++++++ " % (hostAddr)
