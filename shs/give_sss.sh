@@ -15,12 +15,12 @@ if [ "$1" = "qr_code" ]; then
 
 	echo && echo
 
-	echo "SS�˺Ŷ�ά�����ɵ�ַ(����ʡȥ����ķ���)��"
+	echo "SS账号二维码生成地址(可以省去输入的烦恼)："
 	echo
 	echo "http://tool.oschina.net/action/qrcode/generate?output=image%2Fgif&error=L&type=0&margin=0&size=4&data=$paraEncode"
 	echo
-	echo "��ά��ʹ�÷�����:�Ҽ����SS���Կͻ���ϵͳ��ͼ�꣬���������ɨ����Ļ�ϵĶ�ά��"
-	echo "��ά��ʹ�÷�����:�򿪰�׿�ֻ�SS�ͻ��ˣ����\"shadowsocks\"�����+�ţ�ɨ���ά��"
+	echo "二维码使用方法①:右键点击SS电脑客户端系统栏图标，点服务器，扫描屏幕上的二维码"
+	echo "二维码使用方法②:打开安卓手机SS客户端，点击\"shadowsocks\"，点击+号，扫描二维码"
 fi
 
 echo && echo
