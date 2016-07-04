@@ -66,6 +66,8 @@ installSSGoVersion() {
 	mkdir -p /data/go && export GOPATH=/data/go && cd /data/go && go get github.com/shadowsocks/shadowsocks-go/cmd/shadowsocks-server
 	
 	ln -s /data/go/bin/shadowsocks-server /usr/local/bin/ssserver
+    
+    /bin/su - alass -s /bin/sh /home/alass/maintain/shs/check_sss.sh ++++++++
 	
 	echo "############## ShadowSocks Go Version  has been installed #################"
 	echo ""
@@ -284,12 +286,12 @@ changeHostName() {
 
 downloadShellFiles() {
     su alass
-    mkdir ~/maintain && cd ~/maintain
+    /bin/mkdir -p ~/maintain && cd ~/maintain
     /usr/bin/svn co https://github.com/lijiajun/alafafa/trunk/shs
-    mkdir ~/maintain/bin && cd ~/maintain/bin
+    /bin/mkdir -p ~/maintain/bin && cd ~/maintain/bin
     aliasWget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -O jq
-    ln -s /usr/local/bin/ssserver ~/maintain/bin/sssgo
-    chmod -R +x ~/maintain/bin
+    /bin/ln -s /usr/local/bin/ssserver ~/maintain/bin/sssgo
+    /bin/chmod -R +x ~/maintain/bin
 }
 
 run() {

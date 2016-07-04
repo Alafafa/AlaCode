@@ -24,7 +24,7 @@ export -f check_ssServer
 export -f start_ssServer
 
 main(){
-	ls $ssCfgPath | grep ".json" | awk  '{print "check_ssServer " $1}'|sh
+	ls $ssCfgPath | grep $1".json" | awk  '{print "check_ssServer " $1}'|sh
 }
 
-main
+main $1
