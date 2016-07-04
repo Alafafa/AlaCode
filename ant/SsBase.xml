@@ -21,6 +21,9 @@
 		<condition property="shadowName_" value="${argShadowName}_" else="${hostName}_">
 			<isset property="argShadowName" />
 		</condition>
+		
+		
+		<echo>workDir:${workDir}</echo>
 		<input message="ÇëÑ¡ÔñÓÃ»§ID>" addproperty="inputSsUser"/>
 		
 		<echo></echo>
