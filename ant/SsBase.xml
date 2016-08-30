@@ -133,12 +133,20 @@ ${jsonFileContent}
 							ps -ef|grep ssserver|grep -v grep|grep ${shadowName}${inputSsUser}|awk '{print $2}'|xargs kill -9;
 							rm -fr /home/${userName}/shadowsocks/${shadowName}${inputSsUser}.json;" />
 
-			<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
-					command="
-							ps -ef|grep -v grep|grep ${shadowName}{inputSsUser};
-							echo +++++++++++++++++++++++++++++++++++++++++++++++++++;
-							tail -n 10 shadowsocks/logs/nohup_${shadowName}${inputSsUser}.out;" />
-
+			<RunIf if="multiUser">
+				<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
+						command="
+								ps -ef|grep -v grep|grep ${shadowName}{inputSsUser};
+								echo +++++++++++++++++++++++++++++++++++++++++++++++++++;
+								tail -n 10 shadowsocks/logs/nohup_++++++++.out" />
+			</RunIf>
+			<RunIf ifNot="multiUser">
+				<sshexec host="${hostAddr}" username="${userName}" password="${realPswd}" trust="true"
+						command="
+								ps -ef|grep -v grep|grep ${shadowName}{inputSsUser};
+								echo +++++++++++++++++++++++++++++++++++++++++++++++++++;
+								tail -n 10 shadowsocks/logs/nohup_${shadowName}${inputSsUser}.out;" />
+			</RunIf>
 			<delete file="${workDir}/${hostDir}/${shadowName}${inputSsUser}.json"/>
 		</RunIf>
 	</target>
