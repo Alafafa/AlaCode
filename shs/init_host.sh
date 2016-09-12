@@ -307,12 +307,12 @@ changeHostName() {
 }
 
 downloadShellFiles() {
-    su alass
-    /bin/mkdir -p ~/maintain && cd ~/maintain
+    /bin/mkdir -p /home/alass/maintain && cd /home/alass/maintain
     /usr/bin/svn co https://github.com/lijiajun/alafafa/trunk/shs
-    /bin/mkdir -p ~/maintain/bin && cd ~/maintain/bin
+    /bin/mkdir -p /home/alass/maintain/bin && cd /home/alass/maintain/bin
     aliasWget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -O jq
-    /bin/ln -s /usr/local/bin/ssserver ~/maintain/bin/sssgo
+    /bin/ln -s /usr/local/bin/ssserver /home/alass/maintain/bin/sssgo
+    chown -R alass:alass /home/alass
     /bin/chmod -R +x ~/maintain/bin
 }
 
