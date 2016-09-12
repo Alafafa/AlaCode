@@ -211,6 +211,7 @@ alass hard memlock 4000000' >> /etc/security/limits.conf
 
 installServerSpeeder() {
 	${aliasWget} -N --no-check-certificate https://raw.githubusercontent.com/91yun/serverspeeder/master/serverspeeder-all.sh && bash serverspeeder-all.sh && chkconfig --add serverSpeeder && chkconfig serverSpeeder on
+    chkconfig serverSpeeder on
 	echo "############## Server Speeder has been installed #################"
 	echo ""
 }
