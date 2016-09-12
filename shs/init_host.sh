@@ -56,6 +56,8 @@ installSSPythonVersion() {
 	
 	pip install shadowsocks
 	ln -s /usr/bin/ssserver /usr/local/bin/ssserver
+    
+    ecoh '/bin/su - alass -s /bin/sh /home/alass/maintain/shs/check_sss.sh' >> /etc/rc.local
 	
 	echo "############## ShadowSocks Python Version has been installed #################"
 	echo ""
@@ -66,8 +68,9 @@ installSSGoVersion() {
 	mkdir -p /data/go && export GOPATH=/data/go && cd /data/go && go get github.com/shadowsocks/shadowsocks-go/cmd/shadowsocks-server
 	
 	ln -s /data/go/bin/shadowsocks-server /usr/local/bin/ssserver
+    ln -s /usr/local/bin/ssserver /home/alass/maintain/bin/sssgo
     
-    /bin/su - alass -s /bin/sh /home/alass/maintain/shs/check_sss.sh ++++++++
+    echo '/bin/su - alass -s /bin/sh /home/alass/maintain/shs/check_sss.sh ++++++++' >> /etc/rc.local
 	
 	echo "############## ShadowSocks Go Version  has been installed #################"
 	echo ""
@@ -111,6 +114,21 @@ userAlassAdd() {
 	fi
 }
 
+
+installJQ() {
+    bPath="~/maintain/bin"
+    if [ $bPath ! -e ];
+    then
+        mkdir -p $bPath
+    fi
+    
+    cd $bPath &&
+    wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 &&
+    mv jq-linux64 jq &&
+    chmod +x jq 
+}
+
+
 baseSettings() {
 	z=Asia/Shanghai
 	read -p "Input the zoneinfo, [Asia/Shanghai]" zi
@@ -122,6 +140,9 @@ baseSettings() {
 	
 	groupAlassAdd
 	userAlassAdd
+    
+    # installJQ
+    
 	echo "############## Base settings has been set, (Timezone, user and Group) #################"
 	echo ""
 }
