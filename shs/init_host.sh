@@ -68,7 +68,6 @@ installSSGoVersion() {
 	mkdir -p /data/go && export GOPATH=/data/go && cd /data/go && go get github.com/shadowsocks/shadowsocks-go/cmd/shadowsocks-server
 	
 	ln -s /data/go/bin/shadowsocks-server /usr/local/bin/ssserver
-    ln -s /usr/local/bin/ssserver /home/alass/maintain/bin/sssgo
     
     echo '/bin/su - alass -s /bin/sh /home/alass/maintain/shs/check_sss.sh ++++++++' >> /etc/rc.local
 	
@@ -78,18 +77,17 @@ installSSGoVersion() {
 
 setChinaTimezone() {
 	# Default the zoneinfo as the Shanghai China
-	if [ "$1" -eq "Asia/Shanghai" ];
+	if [ $1 ! -z ];
 	then
-		zoneinfoFile=/usr/share/zoneinfo/Asia/Shanghai
+		zoneinfoFile=/usr/share/zoneinfo/$1
 		if [ -e ${zoneinfoFile} ];
 		then
-			cp -fp ${zoneinfoFile} /etc/localtime
+			cp -fp /usr/share/zoneinfo/${zoneinfoFile} /etc/localtime
 		else
 			echo "Zoneinfo File Does not exist"
 		fi
 	else
-		# CentOS
-		tzselect
+		cp -fp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 	fi
     ntpdate time.windows.com
 }
@@ -114,21 +112,6 @@ userAlassAdd() {
 	fi
 }
 
-
-installJQ() {
-    bPath="~/maintain/bin"
-    if [ $bPath ! -e ];
-    then
-        mkdir -p $bPath
-    fi
-    
-    cd $bPath &&
-    wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 &&
-    mv jq-linux64 jq &&
-    chmod +x jq 
-}
-
-
 baseSettings() {
 	z=Asia/Shanghai
 	read -p "Input the zoneinfo, [Asia/Shanghai]" zi
@@ -136,12 +119,11 @@ baseSettings() {
 	then
 		z=$zi
 	fi
+
 	setChinaTimezone $z
 	
 	groupAlassAdd
 	userAlassAdd
-    
-    # installJQ
     
 	echo "############## Base settings has been set, (Timezone, user and Group) #################"
 	echo ""
@@ -237,10 +219,6 @@ deployAlass() {
 	mkdir -p $shPath
 
 	
-	downloadShFile "start_sss.sh"
-	downloadShFile "stop_sss.sh"
-	downloadShFile "give_sss.sh"
-
 	ssPath=${basePath}shadowsocks/
 	mkdir -p ${ssPath}logs
 	
@@ -307,13 +285,13 @@ changeHostName() {
 }
 
 downloadShellFiles() {
-    /bin/mkdir -p /home/alass/maintain && cd /home/alass/maintain
-    /usr/bin/svn co https://github.com/lijiajun/alafafa/trunk/shs
-    /bin/mkdir -p /home/alass/maintain/bin && cd /home/alass/maintain/bin
-    aliasWget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -O jq
-    /bin/ln -s /usr/local/bin/ssserver /home/alass/maintain/bin/sssgo
-    chown -R alass:alass /home/alass
-    /bin/chmod -R +x ~/maintain/bin
+    su - alass -c "/bin/mkdir -p /home/alass/maintain && cd /home/alass/maintain"
+    su - alass -c "/usr/bin/svn co https://github.com/lijiajun/alafafa/trunk/shs"
+    su - alass -c "/bin/mkdir -p /home/alass/maintain/bin && cd /home/alass/maintain/bin"
+    su - alass -c "aliasWget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -O jq"
+    su - alass -c "/bin/ln -s /usr/local/bin/ssserver /home/alass/maintain/bin/sssgo"
+    su - alass -c "chown -R alass:alass /home/alass"
+    su - alass -c "/bin/chmod -R +x /home/alass/maintain/bin"
 }
 
 run() {
