@@ -56,6 +56,8 @@ installSSPythonVersion() {
 	
 	pip install shadowsocks
 	ln -s /usr/bin/ssserver /usr/local/bin/ssserver
+    
+    ecoh '/bin/su - alass -s /bin/sh /home/alass/maintain/shs/check_sss.sh' >> /etc/rc.local
 	
 	echo "############## ShadowSocks Python Version has been installed #################"
 	echo ""
@@ -67,7 +69,7 @@ installSSGoVersion() {
 	
 	ln -s /data/go/bin/shadowsocks-server /usr/local/bin/ssserver
     
-    /bin/su - alass -s /bin/sh /home/alass/maintain/shs/check_sss.sh ++++++++
+    echo '/bin/su - alass -s /bin/sh /home/alass/maintain/shs/check_sss.sh ++++++++' >> /etc/rc.local
 	
 	echo "############## ShadowSocks Go Version  has been installed #################"
 	echo ""
@@ -75,18 +77,17 @@ installSSGoVersion() {
 
 setChinaTimezone() {
 	# Default the zoneinfo as the Shanghai China
-	if [ "$1" -eq "Asia/Shanghai" ];
+	if [ $1 ! -z ];
 	then
-		zoneinfoFile=/usr/share/zoneinfo/Asia/Shanghai
+		zoneinfoFile=/usr/share/zoneinfo/$1
 		if [ -e ${zoneinfoFile} ];
 		then
-			cp -fp ${zoneinfoFile} /etc/localtime
+			cp -fp /usr/share/zoneinfo/${zoneinfoFile} /etc/localtime
 		else
 			echo "Zoneinfo File Does not exist"
 		fi
 	else
-		# CentOS
-		tzselect
+		cp -fp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 	fi
     ntpdate time.windows.com
 }
@@ -118,10 +119,12 @@ baseSettings() {
 	then
 		z=$zi
 	fi
+
 	setChinaTimezone $z
 	
 	groupAlassAdd
 	userAlassAdd
+    
 	echo "############## Base settings has been set, (Timezone, user and Group) #################"
 	echo ""
 }
@@ -190,6 +193,7 @@ alass hard memlock 4000000' >> /etc/security/limits.conf
 
 installServerSpeeder() {
 	${aliasWget} -N --no-check-certificate https://raw.githubusercontent.com/91yun/serverspeeder/master/serverspeeder-all.sh && bash serverspeeder-all.sh && chkconfig --add serverSpeeder && chkconfig serverSpeeder on
+    chkconfig serverSpeeder on
 	echo "############## Server Speeder has been installed #################"
 	echo ""
 }
@@ -215,10 +219,6 @@ deployAlass() {
 	mkdir -p $shPath
 
 	
-	downloadShFile "start_sss.sh"
-	downloadShFile "stop_sss.sh"
-	downloadShFile "give_sss.sh"
-
 	ssPath=${basePath}shadowsocks/
 	mkdir -p ${ssPath}logs
 	
@@ -285,13 +285,13 @@ changeHostName() {
 }
 
 downloadShellFiles() {
-    su alass
-    /bin/mkdir -p ~/maintain && cd ~/maintain
-    /usr/bin/svn co https://github.com/lijiajun/alafafa/trunk/shs
-    /bin/mkdir -p ~/maintain/bin && cd ~/maintain/bin
-    aliasWget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -O jq
-    /bin/ln -s /usr/local/bin/ssserver ~/maintain/bin/sssgo
-    /bin/chmod -R +x ~/maintain/bin
+    su - alass -c "/bin/mkdir -p /home/alass/maintain && cd /home/alass/maintain"
+    su - alass -c "/usr/bin/svn co https://github.com/lijiajun/alafafa/trunk/shs"
+    su - alass -c "/bin/mkdir -p /home/alass/maintain/bin && cd /home/alass/maintain/bin"
+    su - alass -c "aliasWget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -O jq"
+    su - alass -c "/bin/ln -s /usr/local/bin/ssserver /home/alass/maintain/bin/sssgo"
+    su - alass -c "chown -R alass:alass /home/alass"
+    su - alass -c "/bin/chmod -R +x /home/alass/maintain/bin"
 }
 
 run() {
