@@ -1,5 +1,10 @@
 @echo off
+title AlaSS_script_console
 
+if "%alasPswdSub%" == "" (
+	echo please set env var alasPswdSub first.
+	goto eof
+)
 set szDateTime=%DATE:~0,2%%DATE:~3,2%%DATE:~6,2%%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%
 
 if exist .\AlaSale.7z (
@@ -17,4 +22,5 @@ if exist .\AlaSale.7z (
 	7z x -p%alasPswdSub% .\AlaSale.7z
 )
 
+:eof
 echo. && echo press any key to quit. && pause>nul
