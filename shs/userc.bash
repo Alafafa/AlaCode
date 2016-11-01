@@ -13,9 +13,9 @@ if [[ ${USER} == '' ]]; then
 	export USER='Sindo'
 fi
 
+banner "I am "$USER
+
 if [[ ${ENV_VER} == '' ]]; then
-	banner "I am "$USER
-	
 	echo !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	echo !!!!!!!!!!!!!!!!!!!!!!! Warmly welcome to use Alafafa console !!!!!!!!!!!!!!!!!!
 	echo !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
