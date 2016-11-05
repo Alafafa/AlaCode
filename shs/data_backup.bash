@@ -24,7 +24,7 @@ dump_args="--events=true --socket=$sock_path"
 
 echo data_backup_bgn:{$dtm_info}
 
-for db_name in ss_panel wordpress pureftpd
+for db_name in ss_panel wordpress pureftpd mysql
 do
 	echo $dump_bin --user=$db_user --password=$db_pswd $dump_args --databases $db_name\|gzip \> $mysql_bk_path/mysql_${db_name}_$dtm_info.sql.gz
 	$dump_bin --user=$db_user --password=$db_pswd $dump_args --databases $db_name|gzip > $mysql_bk_path/mysql_${db_name}_$dtm_info.sql.gz
