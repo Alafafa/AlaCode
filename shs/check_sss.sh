@@ -2,6 +2,8 @@
 ssCfgPath=/home/alass/shadowsocks
 ssSrvBinFile=/usr/local/bin/ssserver
 
+ssSrvsBinPath=/data/apps/alassserver/shadowsocks
+
 check_ssServer() { 
 	ssFileName=$1
 	serverCounts=`ps aux | grep $ssFileName | grep -v grep | wc -l`
@@ -23,8 +25,16 @@ export ssSrvBinFile
 export -f check_ssServer
 export -f start_ssServer
 
-main(){
-	ls $ssCfgPath | grep $1".json" | awk  '{print "check_ssServer " $1}'|sh
+main() {
+	if [ "$1" == "py.servers" ]; then
+		ssh_proc_num=`ps aux|grep "servers.py" |grep -v grep |wc -l`
+		if [ "$ssh_proc_num" == "0" ]; then
+			echo servers.py not found, staring... 
+			$ssSrvsBinPath/servers.py &
+		fi
+	else
+		ls $ssCfgPath | grep $1".json" | awk  '{print "check_ssServer " $1}'|sh
+	fi
 }
 
 main $1
