@@ -11,6 +11,10 @@ function chenv {
 	#chver
 }
 
+function kill_sshd {
+	ps aux|grep sshd|grep -v sbin|grep -v grep|awk '{print $2}' | xargs kill -9
+}
+
 function chver {
 	echo +------------------------------------------------------------------------------+
 	echo + 当前可用的OB_REL有：
