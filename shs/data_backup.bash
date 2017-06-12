@@ -40,6 +40,6 @@ echo data_backup_end:{$dtm_info}
 
 echo syncup to baidu yun ......
 
-/usr/bin/python /usr/local/bin/bypy.py upload $work_path/mysql_$dtm_info.sql.tgz $month_info/
+/usr/local/bin/bypy upload $work_path/mysql_$dtm_info.sql.tgz $month_info/
 
 echo syncup to baidu yun successfully !

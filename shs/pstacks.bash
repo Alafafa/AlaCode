@@ -1,8 +1,8 @@
 #!/bin/bash
 echo
 pid=0
-exec_time=3
-interval=5
+exec_time=5
+interval=15
 
 if [[ $1 == "" ]];then
     echo "Usage: pstacks pid [exec_times [interval_seconds]]"
